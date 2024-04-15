@@ -14,10 +14,12 @@ export default function App(){
   ]
 
   return (
-    <div>
+    <>
         <h1>Hello World</h1>
-        <h2>{!isLoggedIn ? `Welcome back, ${firstName}` : 'Please Log In or Sign Up'}</h2>
-        {posts.map( p => <h4>{p.title}</h4> )}
-    </div>
+        <h2>{!isLoggedIn ? `Welcome back, ${firstName} ${lastName}` : 'Please Log In or Sign Up'}</h2>
+        {posts.map( p => <h4 key={p.id}>{p.title}</h4> )} 
+    </>
   )
 }
+
+// the return value (the child) always needs a key prop
