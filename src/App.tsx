@@ -1,3 +1,4 @@
+import Navigation from "./components/Navigation";
 
 export default function App(){
   // return React.createElement('div', {}, 'Hello World') // (element, props, element children(can be another createElement)) // would require import Reach from 'react';
@@ -15,6 +16,7 @@ export default function App(){
 
   return (
     <>
+        <Navigation isLoggedIn={isLoggedIn}/>
         <h1>Hello World</h1>
         <h2>{!isLoggedIn ? `Welcome back, ${firstName} ${lastName}` : 'Please Log In or Sign Up'}</h2>
         {posts.map( p => <h4 key={p.id}>{p.title}</h4> )} 
