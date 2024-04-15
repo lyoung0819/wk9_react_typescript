@@ -1,6 +1,7 @@
+import { useState } from "react";
 import Navigation from "./components/Navigation";
 import Container from 'react-bootstrap/Container'
-
+import Button from 'react-bootstrap/Button';
 
 export default function App(){
   // return React.createElement('div', {}, 'Hello World') // (element, props, element children(can be another createElement)) // would require import Reach from 'react';
@@ -9,19 +10,25 @@ export default function App(){
   // within the TSX/JSX, we can hard code out of it to normal TS/JS by using {}
   const firstName: string = 'Lexie';
   const lastName: string = 'Young';
-  const isLoggedIn: boolean = false;
+  const [isLoggedIn, setisLoggedIn] = useState(false);
+  // let isLoggedIn: boolean = true;
   const posts: {id:number, title:string}[] = [
     {id: 1, title: 'Happy Monday'},
     {id: 2, title: 'React Rules'},
     {id: 3, title: 'Spring has Sprung'}
   ]
 
+  const handleClick = () => {
+    setisLoggedIn(!isLoggedIn)
+  }
+
   return (
     <>
         <Navigation isLoggedIn={isLoggedIn}/>
         <Container>
           <h1>Hello World</h1>
-          <h2>{!isLoggedIn ? `Welcome back, ${firstName} ${lastName}` : 'Please Log In or Sign Up'}</h2>
+          <Button variant='primary' onClick={handleClick}>Click me!</Button>
+          <h2>{isLoggedIn ? `Welcome back, ${firstName} ${lastName}` : 'Please Log In or Sign Up'}</h2>
           {posts.map( p => <h4 key={p.id}>{p.title}</h4> )} 
         </Container>
     </>
