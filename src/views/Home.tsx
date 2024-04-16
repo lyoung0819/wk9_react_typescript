@@ -4,7 +4,8 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import PostCard from '../components/PostCard'
-import { PostType } from '../types';
+import PostForm from '../components/PostForm';
+import { PostFormDataType, PostType } from '../types';
 
 
 type Sorting = {
@@ -21,6 +22,8 @@ type HomeProps = {
 }
 
 export default function Home({isLoggedIn, handleClick}: HomeProps) {
+
+    const [showForm, setShowForm] = useState(false);
     const [posts, setPosts] = useState<PostType[]>([
         {
             author: {
@@ -70,26 +73,36 @@ export default function Home({isLoggedIn, handleClick}: HomeProps) {
         setSearchTerm(e.target.value)
     }
 
+    const addNewPost = (newPostData: PostFormDataType) => {
+        const author = {id: 1, firstName: 'Lexie', lastName: 'Young', email: 'ly@email.com', username: 'lyoung0819', dateCreated: 'Tues, Apr 16 2024'}
+        const newPost: PostType = {...newPostData, id:posts.length+1, dateCreated:new Date().toString(), author}
+        setPosts([...posts, newPost]) // setting the current state of Posts to the new copy of posts with our newPost added 
+        setShowForm(false);
+    }
+
     return (
         <>
             <h1>Hello World</h1>
             <Button variant='primary' onClick={handleClick}>Click me!</Button>
             <h2>{isLoggedIn ? `Welcome back!` : 'Please Log In or Sign Up'}</h2>
             <Row>
-                <Col xs={12} md={8}>
+                <Col xs={12} md={6}>
                     <Form.Control value={searchTerm} onChange={handleInputChange} placeholder="Search Posts" />
                 </Col>
                 <Col>
                     <Form.Select onChange={handleSelectChange}>
                         <option value='main'>Sort Posts by ID or Title:</option>
-                        <option value='idAsc'>Sort by ID Ascending</option>
-                        <option value='idDsc'>Sort by ID Descending</option>
+                        <option value='idAsc'>Sort by Oldest</option>
+                        <option value='idDsc'>Sort by Newest</option>
                         <option value='titleAsc'>Sort by Title Ascending</option>
                         <option value='titleDsc'>Sort by Title Descending</option>
                     </Form.Select>
                 </Col>
+                <Col>
+                    <Button className ='w-100' variant='success' onClick={() => (setShowForm(!showForm))}>{ showForm ? 'Hide Post' : 'Add Post+' }</Button>
+                </Col>
             </Row>
-
+            { showForm && <PostForm addNewPost={addNewPost}/> }
             {posts.filter(p => p.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())).map(p => <PostCard key={p.id} post={p} />)}
         </>
     )

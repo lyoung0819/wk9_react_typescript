@@ -15,3 +15,8 @@ export type PostType = {
     dateCreated: string,
     author: UserType
 }
+
+export type PostFormDataType = {
+    title: string,
+    body: string
+}
