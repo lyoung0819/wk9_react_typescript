@@ -1,3 +1,7 @@
 body {
-    background-color: lightblue;
+    background-color: rgb(105, 161, 246);
+}
+
+.bg-custom {
+    background-color: rgb(148, 64, 237);
 }
