@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { CategoryType, UserFormDataType } from '../types';
-import { register } from '../lib/apiWrapper';
+import { login } from '../lib/apiWrapper';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -30,7 +30,18 @@ export default function Login({ flashMessage }: LoginProps) {
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(userFormData);
+        
+        const response = await login(userFormData.username!, userFormData.password!)
+        if(response.error){
+            flashMessage(response.error, 'danger')
+        } else {
+            const token = response.data!.token
+            const tokenExp = response.data!.tokenExpiration
+            localStorage.setItem('token', token)
+            localStorage.setItem('tokenExp', tokenExp)
+            flashMessage(response.data?.token, 'success')
+            navigate('/')
+        }
     }
 
     return (

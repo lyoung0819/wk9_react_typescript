@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import PostCard from '../components/PostCard'
 import PostForm from '../components/PostForm';
-import { PostFormDataType, PostType } from '../types';
+import { PostFormDataType, PostType, UserType } from '../types';
 import { getAllPosts } from '../lib/apiWrapper';
 
 
@@ -19,10 +19,11 @@ type Sorting = {
 // must defined the HomeProps TYPE and then destructure it to use is in your function (peep Home())
 type HomeProps = {
     isLoggedIn: boolean, 
-    handleClick: () => void
+    handleClick: () => void,
+    currentUser: UserType|null
 }
 
-export default function Home({isLoggedIn, handleClick}: HomeProps) {
+export default function Home({isLoggedIn, handleClick, currentUser}: HomeProps) {
 
     const [showForm, setShowForm] = useState(false);
     const [posts, setPosts] = useState<PostType[]>([])
@@ -66,9 +67,7 @@ export default function Home({isLoggedIn, handleClick}: HomeProps) {
 
     return (
         <>
-            <h1>Hello World</h1>
-            <Button variant='primary' onClick={handleClick}>Click me!</Button>
-            <h2>{isLoggedIn ? `Welcome back!` : 'Please Log In or Sign Up'}</h2>
+            <h1 className='text-center'>{isLoggedIn ? `Hello ${currentUser?.firstName} ${currentUser?.lastName}` : 'Welcome to the Blog!' }</h1>
             <Row>
                 <Col xs={12} md={6}>
                     <Form.Control value={searchTerm} onChange={handleInputChange} placeholder="Search Posts" />
