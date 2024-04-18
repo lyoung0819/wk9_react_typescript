@@ -7,10 +7,11 @@ import Button from 'react-bootstrap/Button';
 
 
 type NavigationProps = {
-    isLoggedIn: boolean
+    isLoggedIn: boolean,
+    logUserOut: () => void
 }
 
-export default function Navigation({ isLoggedIn }: NavigationProps){
+export default function Navigation({ isLoggedIn, logUserOut }: NavigationProps){
     console.log('Navigation component is being rendered');
 
     const [backgroundTheme, setBackgroundTheme] = useState('dark');
@@ -25,7 +26,7 @@ export default function Navigation({ isLoggedIn }: NavigationProps){
                         {isLoggedIn ? (
                             <>
                                 <Nav.Link href='/'>Create Post</Nav.Link>
-                                <Nav.Link href='/'>Log Out</Nav.Link>
+                                <Nav.Link as={Link} to='/' onClick={() => logUserOut()} >Log Out</Nav.Link>
                             </>
                         ) : (
                             <>

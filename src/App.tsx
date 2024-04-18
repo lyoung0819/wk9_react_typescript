@@ -45,15 +45,27 @@ export default function App() {
     setCategory(newCategory);
   }
 
+  const logUserIn = () => {
+    setisLoggedIn(true)
+}
+
+  const logUserOut = () => {
+    setisLoggedIn(false);
+    setisLoggedInUser(null);
+    localStorage.removeItem('token')
+    localStorage.removeItem('tokenExp')
+    flashMessage('You have been logged out', 'dark')
+  }
+
   return (
     <>
-      <Navigation isLoggedIn={isLoggedIn} />
+      <Navigation isLoggedIn={isLoggedIn} logUserOut={logUserOut}/>
       <Container>
         {message && <AlertMessage message={message} category={category} flashMessage={flashMessage}/>}
         <Routes>
             <Route path='/' element={<Home isLoggedIn={isLoggedIn} handleClick={handleClick} currentUser={loggedInUser}/>} />
             <Route path="/signup" element={ <SignUp flashMessage={flashMessage}/>} /> 
-            <Route path="/login" element={ <Login flashMessage={flashMessage}/>} /> 
+            <Route path="/login" element={ <Login flashMessage={flashMessage} logUserIn={logUserIn} />} /> 
         </Routes>
       </Container>
     </>
