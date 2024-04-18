@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import PostCard from '../components/PostCard'
 import PostForm from '../components/PostForm';
 import { PostFormDataType, PostType } from '../types';
+import { getAllPosts } from '../lib/apiWrapper';
 
 
 type Sorting = {
@@ -24,36 +25,19 @@ type HomeProps = {
 export default function Home({isLoggedIn, handleClick}: HomeProps) {
 
     const [showForm, setShowForm] = useState(false);
-    const [posts, setPosts] = useState<PostType[]>([
-        {
-            author: {
-                dateCreated: "Fri, 29 Mar 2024 16:58:44 GMT",
-                email: "brians@codingtemple.com",
-                firstName: "Brian",
-                id: 1,
-                lastName: "Stanton",
-                username: "bstanton"
-            },
-            body: "We are alive!!!!!!",
-            dateCreated: "Fri, 29 Mar 2024 17:00:35 GMT",
-            id: 1,
-            title: "Alive"
-        },
-        {
-            author: {
-                dateCreated: "Tue, 14 Apr 2024 16:58:44 GMT",
-                email: "brians@codingtemple.com",
-                firstName: "Brian",
-                id: 1,
-                lastName: "Stanton",
-                username: "bstanton"
-            },
-            body: "I love React!",
-            dateCreated: "Tue, 16 Apr 2024 17:00:35 GMT",
-            id: 2,
-            title: "React"
-        },
-    ])
+    const [posts, setPosts] = useState<PostType[]>([])
+    
+    useEffect(() => {
+        async function fetchData(){
+            const response = await getAllPosts();
+            if (response.data){
+                let posts = response.data;
+                setPosts(posts)
+            }
+        }
+
+        fetchData();
+    }, [])
 
     const [searchTerm, setSearchTerm] = useState(''); // initially will be empty string because there will be no words in search bar
 

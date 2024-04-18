@@ -3,11 +3,14 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { UserFormDataType } from '../types';
+import { CategoryType, UserFormDataType } from '../types';
+import { register } from '../lib/apiWrapper';
 
-type Props = {}
+type SignUpProps = {
+    flashMessage: (newMessage:string|undefined, newCategory:CategoryType|undefined) => void
+}
 
-export default function SignUp({}: Props) {
+export default function SignUp({ flashMessage }: SignUpProps) {
     const [userFormData, setUserFormData] = useState<UserFormDataType>(
     {
         firstName: '',
@@ -28,8 +31,14 @@ export default function SignUp({}: Props) {
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-
-        console.log(userFormData)
+        
+        let response = await register(userFormData);
+        if (response.error){
+            flashMessage(response.error, 'danger');
+        } else {
+            let newUser = response.data!
+            flashMessage(`Congrats ${newUser.firstName} ${newUser.lastName} has been created with the username ${newUser.username}`, 'success')
+        }
     }
 
     //more sophisticated password with regex: const disableSubmit = !/^(?=.*\d)(?=.*[a-zA-Z])(?=.*[A-Z])(?=.*[-\#\$\.\%\&\*\!\?])(?=.*[a-zA-Z]).{8,16}$/.test(userFormData.password) || userFormData.password !== userFormData.password
