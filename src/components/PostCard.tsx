@@ -1,12 +1,14 @@
 // tsrfc - when building a new component
-import { PostType } from '../types'
+import { PostType, UserType } from '../types'
 import Card from 'react-bootstrap/Card'
+import Button from 'react-bootstrap/Button'
 
 type PostCardProps = {
-    post: PostType
+    post: PostType,
+    currentUser: UserType|null
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, currentUser }: PostCardProps) {
     console.log(post)
     // want to display post in a nice way 
   return (
@@ -16,6 +18,7 @@ export default function PostCard({ post }: PostCardProps) {
             <Card.Title>{ post.title }</Card.Title>
             <Card.Subtitle>{ post.author.username }</Card.Subtitle>
             <Card.Text>{ post.body }</Card.Text>
+            {post.author.id === currentUser?.id &&<Button variant='primary'>Edit Post</Button> }
         </Card.Body>
     </Card>
   )

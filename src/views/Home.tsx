@@ -5,8 +5,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import PostCard from '../components/PostCard'
 import PostForm from '../components/PostForm';
-import { PostFormDataType, PostType, UserType } from '../types';
-import { getAllPosts } from '../lib/apiWrapper';
+import { CategoryType, PostFormDataType, PostType, UserType } from '../types';
+import { getAllPosts, createPost } from '../lib/apiWrapper';
 
 
 type Sorting = {
@@ -19,26 +19,26 @@ type Sorting = {
 // must defined the HomeProps TYPE and then destructure it to use is in your function (peep Home())
 type HomeProps = {
     isLoggedIn: boolean, 
-    handleClick: () => void,
-    currentUser: UserType|null
+    currentUser: UserType|null,
+    flashMessage: (newMessage:string, newCategory:CategoryType) => void
 }
 
-export default function Home({isLoggedIn, handleClick, currentUser}: HomeProps) {
-
+export default function Home({isLoggedIn, currentUser, flashMessage}: HomeProps) {
     const [showForm, setShowForm] = useState(false);
     const [posts, setPosts] = useState<PostType[]>([])
-    
+    const [fetchPostData, setFetchPostData] = useState(true);
+
     useEffect(() => {
         async function fetchData(){
             const response = await getAllPosts();
             if (response.data){
                 let posts = response.data;
+                posts.sort((a, b) => (new Date(a.dateCreated) > new Date(b.dateCreated) ? 1 : -1))
                 setPosts(posts)
             }
         }
-
         fetchData();
-    }, [])
+    }, [fetchPostData])
 
     const [searchTerm, setSearchTerm] = useState(''); // initially will be empty string because there will be no words in search bar
 
@@ -58,11 +58,16 @@ export default function Home({isLoggedIn, handleClick, currentUser}: HomeProps) 
         setSearchTerm(e.target.value)
     }
 
-    const addNewPost = (newPostData: PostFormDataType) => {
-        const author = {id: 1, firstName: 'Lexie', lastName: 'Young', email: 'ly@email.com', username: 'lyoung0819', dateCreated: 'Tues, Apr 16 2024'}
-        const newPost: PostType = {...newPostData, id:posts.length+1, dateCreated:new Date().toString(), author}
-        setPosts([...posts, newPost]) // setting the current state of Posts to the new copy of posts with our newPost added 
-        setShowForm(false);
+    const addNewPost = async (newPostData: PostFormDataType) => {
+        const token = localStorage.getItem('token') || '';
+        const response = await createPost(token, newPostData)
+        if (response.error){
+            flashMessage(response.error, 'danger')
+        } else if (response.data) {
+            flashMessage(`${response.data.title} has been created`, 'success')
+            setShowForm(false);
+            setFetchPostData(!fetchPostData)
+        }
     }
 
     return (
@@ -81,12 +86,14 @@ export default function Home({isLoggedIn, handleClick, currentUser}: HomeProps) 
                         <option value='titleDsc'>Sort by Title Descending</option>
                     </Form.Select>
                 </Col>
-                <Col>
-                    <Button className ='w-100' variant='success' onClick={() => (setShowForm(!showForm))}>{ showForm ? 'Hide Post' : 'Add Post+' }</Button>
-                </Col>
+                {isLoggedIn && 
+                    (<Col>
+                        <Button className ='w-100' variant='success' onClick={() => (setShowForm(!showForm))}>{ showForm ? 'Hide Post' : 'Add Post+' }</Button>
+                    </Col>)
+                }
             </Row>
             { showForm && <PostForm addNewPost={addNewPost}/> }
-            {posts.filter(p => p.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())).map(p => <PostCard key={p.id} post={p} />)}
+            {posts.filter(p => p.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())).map(p => <PostCard key={p.id} post={p} currentUser={currentUser}/>)}
         </>
     )
 }
