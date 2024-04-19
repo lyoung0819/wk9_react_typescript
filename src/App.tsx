@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import AlertMessage from './components/AlertMessage'
 import Navigation from "./components/Navigation";
 import Container from 'react-bootstrap/Container'
+import EditPost from './views/EditPost';
 import Home from './views/Home';
 import Login from './views/LogIn'
 import SignUp  from "./views/SignUp";
@@ -66,6 +67,7 @@ export default function App() {
             <Route path='/' element={<Home isLoggedIn={isLoggedIn} currentUser={loggedInUser} flashMessage={flashMessage} />} />
             <Route path="/signup" element={ <SignUp flashMessage={flashMessage}/>} /> 
             <Route path="/login" element={ <Login flashMessage={flashMessage} logUserIn={logUserIn} />} /> 
+            <Route path='/edit/:postId' element={<EditPost flashMessage={flashMessage} currentUser={loggedInUser}/>} />
         </Routes>
       </Container>
     </>

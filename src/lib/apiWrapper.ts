@@ -111,7 +111,42 @@ async function createPost(token:string, postData:PostFormDataType): Promise<APIR
             error = 'Something went wrong'
         }
     }
+    return { data, error }
 }
+
+
+async function getPostById(postID:string|number): Promise<APIResponse<PostType>> {
+    let data;
+    let error;
+    try{
+        const response = await apiClientNoAuth().get(postEndpoint + '/' + postID)
+        data= response.data
+    } catch(err) {
+        if (axios.isAxiosError(err)){
+            error = err.response?.data.error
+        } else {
+            error = 'Something went wrong'
+        }
+    }
+    return { data, error }
+}
+
+async function editPostById(postId:string|number, token:string, editedPostData:PostFormDataType): Promise<APIResponse<PostType>> {
+    let data;
+    let error;
+    try{
+        const response = await apiClientTokenAuth(token).put(postEndpoint + '/' + postId, editedPostData)
+        data = response.data
+    } catch(err) {
+        if (axios.isAxiosError(err)){
+            error = err.response?.data?.error || `Post with ID ${postId} does not exist`
+        } else {
+            error = 'Something went wrong'
+        }
+    }
+    return { data, error }
+}
+
 
 
 export {
@@ -119,5 +154,7 @@ export {
     getAllPosts,
     login,
     getMe,
-    createPost
+    createPost,
+    getPostById,
+    editPostById
 }
